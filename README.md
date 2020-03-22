@@ -1,7 +1,7 @@
 # expression-generator
-四则运算表达式生成器
+> 利用`Electron`技术开发的四则运算表达式生成器桌面程序
 
-# App目录描述
+## App目录描述
 ```txt
 App
 ├── node_modules 			// 依赖包
@@ -18,8 +18,8 @@ App
 └── preload.js 				// 主页面
 ```
 
-# `npm run start`
+## `npm run start`
 > 启动程序
 
-# `npm run package`
+## `npm run package`
 > 打包生成 `.exe` 文件，可以通过 `cmd`命令行传参操作
