@@ -18,7 +18,7 @@ App
 └── preload.js 				// 主页面
 ```
 
-## `npm run start`
+## `npm start`
 > 启动程序
 
 ## `npm run package`
