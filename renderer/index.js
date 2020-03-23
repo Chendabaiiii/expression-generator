@@ -1,14 +1,27 @@
 // 窗口的渲染器进程中执行
-const Utils = require('./Utils/index');   // 引入功能模块
-Utils.xhnb();
+const Utils = require('./Utils/index'); // 引入功能模块
+const Operands = require('./Class/Operands'); // 操作数类
 
-// ES6类
-class App {
-  constructor() {
+let mode; // -r 参数范围  -n 题目数目
+let questionTotal = 10; // 题目总数
+let range = 10; // 参数范围
+let questionArr = []; // 题目数组
+let ansArr = []; // 答案数组
+
+for (let i = 0; i < questionTotal; i++) {
+  let operandNum = Utils.randomNum(2, 4); // 2-4个操作数
+  let operatorNum = operandNum - 1; // 1-3个操作符
+  let expArr = [];
+  for (let j = 0; j < operandNum; j++) {
+    expArr.push(new Operands(range));
+    if(j !== operatorNum) {
+      expArr.push(Utils.generateOperator());
+    }
   }
-  init() {
-  }
+  questionArr.push(expArr);
 }
+console.log(questionArr);
+
 
 const remote = require('electron').remote
 // alert(remote.process.argv);  // 打印命令行参数的
