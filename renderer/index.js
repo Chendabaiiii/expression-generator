@@ -3,7 +3,7 @@ const Utils = require('./Utils/index'); // 引入功能模块
 const Operands = require('./Class/Operands'); // 操作数类
 
 let mode; // -r 参数范围  -n 题目数目
-let questionTotal = 10; // 题目总数
+let questionTotal = 100; // 题目总数
 let range = 10; // 参数范围
 let questionArr = []; // 题目数组
 let ansArr = []; // 答案数组
@@ -20,7 +20,8 @@ for (let i = 0; i < questionTotal; i++) {
   }
   questionArr.push(expArr);
 }
-console.log(questionArr);
+
+console.log(Utils.insertBrackets(questionArr));
 
 
 const remote = require('electron').remote
