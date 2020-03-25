@@ -1,4 +1,3 @@
-import { rangeObj } from '../renderer/index.mjs'
 import Operands from '../Class/Operands.mjs'
 import Operator from '../Class/Operator.mjs'
 
@@ -7,7 +6,6 @@ const Arithmetic = {
   // 两个操作数求和 
   addOperands(a, b) {
     return (new Operands({
-      range: rangeObj.range,
       numerator: a.numerator * b.denominator + b.numerator * a.denominator,
       denominator: a.denominator * b.denominator
     })).toStr();
@@ -15,7 +13,6 @@ const Arithmetic = {
   // 两个操作数求差
   subOperands(a, b) {
     return (new Operands({
-      range: rangeObj.range,
       numerator: a.numerator * b.denominator - b.numerator * a.denominator,
       denominator: a.denominator * b.denominator
     })).toStr();
@@ -23,7 +20,6 @@ const Arithmetic = {
   // 两个操作数乘法
   multOperands(a, b) {
     return (new Operands({
-      range: rangeObj.range,
       numerator: a.numerator * b.numerator,
       denominator: a.denominator * b.denominator
     })).toStr();
@@ -31,7 +27,6 @@ const Arithmetic = {
   // 两个操作数除法
   divOperands(a, b) {
     return (new Operands({
-      range: rangeObj.range,
       numerator: a.numerator * b.denominator,
       denominator: a.denominator * b.numerator
     })).toStr();
@@ -74,13 +69,14 @@ export let toSuffixExp = (infix) => {
 }
 
 // 计算中缀表达式数组计算为答案数组
+// ['答案1','答案2','答案3'] 1'3/5 的格式
 export let calculateSuffix = (suffix) => {
   const {
     addOperands,
     subOperands,
     multOperands,
     divOperands
-  } = Arithmetic;
+  } = Arithmetic;   // 四则运算
   return suffix.map(expression => {
     let stack = []; // 存放运算结果
     expression.forEach(item => {

@@ -27,9 +27,6 @@ export default class Operator {
 
   // 转为字符串
   toStr() {
-    let operator = this.operator;
-    // operator = (operator === '/') ? '÷' : '/';
-    // operator = (operator === '*') ? '×' : '*';
-    return ` ${operator} `;
+    return ` ${this.operator} `;
   }
 }

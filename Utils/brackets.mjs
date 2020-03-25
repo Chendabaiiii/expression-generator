@@ -1,6 +1,10 @@
 import {
   randomNum
-} from '../Utils/index.mjs';
+} from './index.mjs';
+import {
+  toSuffixExp,
+  calculateSuffix
+} from './calculate.mjs'
 import Operands from '../Class/Operands.mjs'
 
 // 插入括号主要函数
@@ -33,7 +37,11 @@ export let randomInsertBrackets = (expressionArr) => {
   expressionArr.splice(leftInsertIndex, 0, '('); // 插入左括号
   // 右括号可以插入的实际位置
   let rightInsertIndex = findRightCanInsert(expressionArr, leftInsertIndex);
-  expressionArr.splice(rightInsertIndex, 0, ')'); // 插入左括号
+  if(rightInsertIndex === false) {
+    expressionArr.splice(leftInsertIndex, 1);   // 删除左括号
+  } else {
+    expressionArr.splice(rightInsertIndex, 0, ')'); // 插入左括号
+  }
   return expressionArr;
 }
 
@@ -49,18 +57,26 @@ export let findLeftCanInsert = (expressionArr) => {
 
 // 寻找右括号可以插入的位置
 export let findRightCanInsert = (expressionArr, leftIndex) => {
-  let Arr = [];
+  let Arr = [];   // 右括号可以插入的位置数组
   for (let i = leftIndex + 1; i < expressionArr.length; i++) {
-    (expressionArr[i] instanceof Operands) && Arr.push(i + 1);
+    // 操作数的右边而且操作数左边没有(
+    if((expressionArr[i] instanceof Operands) && (expressionArr[i - 1] !== '(')) {
+      Arr.push(i + 1);
+    }
+  }
+  // 没有符合的位置，那么就返回false
+  if (Arr.length === 0) {
+    return false;
   }
   return Arr[randomNum(0, Arr.length - 1)];
 }
 
-// 去除多余的()
+// 去除多余的() TODO:
 export let rmExcessBrackets = (expressionArr) => {
-  let exp1 = /^\([^\(^\)]*\)$/; // 首位是(,末尾是)且中间没有括号的情况
-  // let exp2 = /\([^+^-^×^÷]*\)/;
-  if (exp1.test(expressionArr)) {
+  let exp2 = /^\(((?!.*(\)[^\(^\)]*\()).)*\)$/;   // 第一位是(,最后一位是)，然后中间不是 )...( 的情况，就要去除首尾
+  // console.log("去除括号",expressionArr);
+  // console.log("去除括号",expressionArr.join(''));
+  if (exp2.test(expressionArr.join(''))) {
     return expressionArr.slice(1, expressionArr.length - 1);
   }
   return expressionArr;
