@@ -35,13 +35,13 @@ PSP2.1 | Personal Software Process Stages | 预估耗时（分钟） | 实际耗
 -|-|-|-
 Planning | 计划 | 30 | 
 Estimate | 估计这个任务需要多少时间 | 30 | 
-Development | 开发 | 1310 | 300
+Development | 开发 | 1310 | 
 Analysis | 需求分析 (包括学习新技术) | 60 | 
 Design Spec | 生成设计文档 | 0 | 0
 Design Review | 设计复审 (和同事审核设计文档) | 0 | 0
 Coding Standard | 代码规范 (为目前的开发制定合适的规范) | 10 | 
 Design | 具体设计 | 180 | 
-Coding | 具体编码 | 1000 | 
+Coding | 具体编码 | 1000 | 300
 Code Review | 代码复审 | 30 |
 Test | 测试（自我测试，修改代码，提交修改） | 30 |
 Reporting | 报告 | 120 |
