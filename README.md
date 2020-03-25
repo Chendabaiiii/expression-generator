@@ -8,9 +8,15 @@ App
 ├── index.html 				// 主页面
 ├── main.js 				// 主进程
 ├── renderer 				// 渲染进程
-│ └── index.js
-├── Uitls 				// 存放功能函数
-│ └── index.js
+│ └── index.mjs
+├── Class 				  // 类
+│ ├── Operator.mjs  // 操作符类
+│ └── Operands.mjs  // 操作数类
+├── Uitls 				  // 存放功能函数
+│ ├── brackets.mjs   // 与括号相关的方法
+│ ├── calculate.mjs  // 与计算相关的方法
+│ ├── questions.mjs  // 与题目相关的方法
+│ └── index.mjs      // 公共方法      
 ├── package.json 			// webpack 配置
 ├── package-lock.json 			// webpack 配置
 ├── .gitignore 				// github 推送忽略配置
