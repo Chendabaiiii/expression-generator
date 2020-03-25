@@ -1,7 +1,9 @@
-const Utils = require('../Utils/index'); // 引入功能模块
+import {
+  randomNum
+} from '../Utils/index.mjs';
 // 运算符类
-module.exports = class Operator {
-  constructor(operator = ['+', '-', '×', '÷'][Utils.randomNum(0, 3)]) {
+export default class Operator {
+  constructor(operator = ['+', '-', '×', '÷'][randomNum(0, 3)]) {
     this.operator = operator; // 操作符，默认是随机生成，也可以传入生成
     this.value = this.getValue();
   }
@@ -19,7 +21,7 @@ module.exports = class Operator {
         return 2;
       default:
         // 不存在该运算符 
-        return 0;              
+        return 0;
     }
   }
 

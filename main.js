@@ -12,9 +12,10 @@ function createWindow() {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true
+      nodeIntegration: true,
     }
   })
+  mainWindow.webContents.openDevTools(); // 开发打开控制台
   // 加载主进程
   mainWindow.loadFile('index.html')
 }

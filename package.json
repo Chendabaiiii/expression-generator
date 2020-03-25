@@ -10,9 +10,7 @@
   },
   "devDependencies": {
     "electron": "^8.1.1",
-    "electron-packager": "^14.2.1"
-  },
-  "dependencies": {
+    "electron-packager": "^14.2.1",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/polyfill": "^7.8.7",
     "@babel/runtime": "^7.9.2",
@@ -22,5 +20,6 @@
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "@babel/register": "^7.0.0"
-  }
+  },
+  "dependencies": {}
 }
