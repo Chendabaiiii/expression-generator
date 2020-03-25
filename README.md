@@ -9,7 +9,7 @@ App
 ├── main.js 				// 主进程
 ├── renderer 				// 渲染进程
 │ └── index.mjs
-├── Class 				  // 类
+├── Class 				// 类
 │ ├── Operator.mjs      		// 操作符类
 │ └── Operands.mjs      		// 操作数类
 ├── Uitls 				// 存放功能函数
