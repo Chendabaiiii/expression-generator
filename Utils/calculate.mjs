@@ -5,78 +5,85 @@ import Operator from '../Class/Operator.mjs'
 const Arithmetic = {
   // 两个操作数求和 
   addOperands(a, b) {
-    return (new Operands({
+    return new Operands({
       numerator: a.numerator * b.denominator + b.numerator * a.denominator,
       denominator: a.denominator * b.denominator
-    })).toStr();
+    });
   },
   // 两个操作数求差
   subOperands(a, b) {
-    return (new Operands({
+    return new Operands({
       numerator: a.numerator * b.denominator - b.numerator * a.denominator,
       denominator: a.denominator * b.denominator
-    })).toStr();
+    });
   },
   // 两个操作数乘法
   multOperands(a, b) {
-    return (new Operands({
+    return new Operands({
       numerator: a.numerator * b.numerator,
       denominator: a.denominator * b.denominator
-    })).toStr();
+    });
   },
   // 两个操作数除法
   divOperands(a, b) {
-    return (new Operands({
+    return new Operands({
       numerator: a.numerator * b.denominator,
       denominator: a.denominator * b.numerator
-    })).toStr();
+    });
   }
 }
 
-// 将中缀表达式数组转为后缀表达式数组
+/**
+ * @description: 将中缀表达式数组转为后缀表达式数组
+ * @param {Array[]} infix 中缀表达式问题数组 
+ * @return: 后缀表达式问题数组
+ */
 export let toSuffixExp = (infix) => {
   return infix.map(expression => {
-    let stack1 = [];
-    let stack2 = [];
-    // console.log(expression);
+    let temp = []; // 临时存放
+    let suffix = []; // 存放后缀表达式
     expression.forEach((item, index) => {
       if (item instanceof Operands) {
-        // 遇到操作数
-        // 压入 stack2
-        stack2.push(item)
+        suffix.push(item) // 遇到操作数,压入 suffix
       } else if (item === '(') {
-        // 遇到左括号
-        stack1.push(item);
+        temp.push(item); // 遇到左括号,压入 temp
       } else if (item === ')') {
         // 遇到右括号
-        while (stack1[stack1.length - 1] !== '(') {
-          stack2.push(stack1.pop());
+        while (temp[temp.length - 1] !== '(') {
+          suffix.push(temp.pop());
         }
-        stack1.pop();
+        temp.pop(); // 弹出左括号
       } else if (item instanceof Operator) {
         // 运算符
-        while (stack1.length !== 0 && stack1[stack1.length - 1].value >= item.value) {
-          stack2.push(stack1.pop());
+        // 如果栈顶是运算符，且栈顶运算符的优先级大于或等于该运算符
+        while (temp.length !== 0 &&
+          temp[temp.length - 1] instanceof Operator &&
+          temp[temp.length - 1].value >= item.value) {
+          suffix.push(temp.pop());
         }
-        stack1.push(item);
+        // 是空栈或者栈顶是左括号亦或是栈顶优先级低，则直接入栈到 temp
+        temp.push(item);
       }
     });
-    while (stack1.length !== 0) {
-      stack2.push(stack1.pop());
+    while (temp.length !== 0) {
+      suffix.push(temp.pop());
     }
-    return stack2;
+    return suffix;
   })
 }
 
-// 计算中缀表达式数组计算为答案数组
-// ['答案1','答案2','答案3'] 1'3/5 的格式
+/**
+ * @description: 计算后缀表达式数组计算为答案数组
+ * @param {Array[]} 
+ * @return: ['答案1','答案2','答案3']且每条答案为 a'b/c 的格式
+ */
 export let calculateSuffix = (suffix) => {
   const {
     addOperands,
     subOperands,
     multOperands,
     divOperands
-  } = Arithmetic;   // 四则运算
+  } = Arithmetic; // 四则运算方法
   return suffix.map(expression => {
     let stack = []; // 存放运算结果
     expression.forEach(item => {
@@ -106,6 +113,7 @@ export let calculateSuffix = (suffix) => {
         stack.push(result);
       }
     })
-    return stack.pop();
+    let top = stack.pop();
+    return [top.toValue(), top.toStr()];
   })
 }

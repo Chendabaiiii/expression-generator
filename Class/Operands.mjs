@@ -19,12 +19,15 @@ export default class Operands {
 
   // 转换为 a'b/c 格式的字符串
   toStr() {
-    let integer = Math.floor(this.numerator / this.denominator); // 假分数前面的整数
-    let numerator = this.numerator % this.denominator; // 分子
-    let denominator = this.denominator; // 分母
-    if (numerator === 0) return this.numerator / denominator; // 是否整除
+    this.absDen = Math.abs(this.denominator);   // 取绝对值
+    this.absNum = Math.abs(this.numerator);     // 取绝对值
+    this.isNegative = this.denominator * this.numerator < 0 ? '-' : '';   // 是否是负数
+    let integer = Math.floor(this.absNum / this.absDen); // 假分数前面的整数
+    let numerator = this.absNum % this.absDen; // 分子
+    let denominator = this.absDen; // 分母
+    if (numerator === 0) return this.absNum / denominator; // 是否整除
     let gcdNum = gcd(numerator, denominator); // 求最大公约数
-    return `${integer === 0 ? '' : `${integer}'`}${numerator / gcdNum}/${denominator / gcdNum}`;
+    return `${this.isNegative}${integer === 0 ? '' : `${integer}'`}${numerator / gcdNum}/${denominator / gcdNum}`;
   }
 
   // 求真正的数值

@@ -10,8 +10,16 @@ import {
   calculateSuffix, // 计算后缀表达式
   toSuffixExp, // 中缀转后缀
 } from './calculate.mjs' // 与计算相关的方法
+import {
+  writeFile
+} from './file.mjs'
 
-// 生成 total 个题目的函数
+/**
+ * @description: 生成题目的函数
+ * @param {number} total  题目个数
+ * @param {number} range  参数范围
+ * @return: ['表达式1','表达式2'...]
+ */
 export let generateQuestions = (total, range) => {
   let questionArr = []; // 题目数组
   let canBeZero = true; // 操作数是否可以为0 
@@ -35,16 +43,21 @@ export let generateQuestions = (total, range) => {
   }
 
   let insertBracketsArr = insertBrackets(questionArr); // 插入括号
+  let strQuestionsArr = questionsToStr(insertBracketsArr);
   console.log("插入括号后：", insertBracketsArr);
-  console.log("变为对应的题目格式后：", questionsToStr(insertBracketsArr));
-  console.log("转为后缀表达式：", calculateSuffix(toSuffixExp(insertBracketsArr)));
+  console.log("变为对应的题目格式后：", strQuestionsArr);
+  console.log("转为后缀表达式：", questionsToStr(toSuffixExp(insertBracketsArr)));
+  console.log("答案：",calculateSuffix(toSuffixExp(insertBracketsArr)));
+  // writeFile('Exercises.txt', strQuestionsArr);
 }
 
-// 将整个 questionArr 遍历转换为题目格式
-// [[],[],[]]
-export let questionsToStr = questionArr => questionArr.map(expression => (expression.map(item => {
-  if (typeof item === 'object') {
-    return item.toStr();
-  }
-  return item;
-})).join('').concat(' = '))
+/**
+ * @description: 题目数组遍历转换为题目格式(string[]) 
+ * @param {Array[]} questionArr  题目数组
+ * @return: 转为固定格式的题目字符串数组
+ */
+export let questionsToStr = questionArr => questionArr.map((expression, index) => {
+  let str = expression.map(item => (typeof item === 'object') ? item.toStr() : item);
+  str.unshift(`${index + 1}：`);
+  return str.join('').concat(' = ');
+})
