@@ -6,6 +6,7 @@ import {
   calculateSuffix
 } from './calculate.mjs'
 import Operands from '../Class/Operands.mjs'
+import Operator from '../Class/Operator.mjs'
 
 /**
  * @description: 给问题数组的每个表达式插入括号的主要函数
@@ -45,8 +46,8 @@ export let randomInsertBrackets = (expressionArr) => {
   expressionArr.splice(leftInsertIndex, 0, '('); // 插入左括号
   // 右括号可以插入的实际位置
   let rightInsertIndex = findRightCanInsert(expressionArr, leftInsertIndex);
-  if(rightInsertIndex === false) {
-    expressionArr.splice(leftInsertIndex, 1);   // 删除左括号
+  if (rightInsertIndex === false) {
+    expressionArr.splice(leftInsertIndex, 1); // 删除左括号
   } else {
     expressionArr.splice(rightInsertIndex, 0, ')'); // 插入左括号
   }
@@ -74,10 +75,19 @@ export let findLeftCanInsert = (expressionArr) => {
  * @return: 随机返回一个右括号可插入位置，如果没有则返回 false
  */
 export let findRightCanInsert = (expressionArr, leftIndex) => {
-  let Arr = [];   // 右括号可以插入的位置数组
+  let Arr = []; // 右括号可以插入的位置数组
+  let operatorCnt = []; // 计算操作符个数
+  let frontOperator = null; 
+  // 获取左括号前面的操作符
+  (!leftIndex) && (frontOperator = expressionArr[leftIndex - 1]);
+  leftIndex && expressionArr.forEach(item => {
+    if (item instanceof Operator) {
+      operatorCnt[item.operator]++; // + - × ÷
+    }
+  })
   for (let i = leftIndex + 1; i < expressionArr.length; i++) {
     // 操作数的右边而且操作数左边没有(
-    if((expressionArr[i] instanceof Operands) && (expressionArr[i - 1] !== '(')) {
+    if ((expressionArr[i] instanceof Operands) && (expressionArr[i - 1] !== '(')) {
       Arr.push(i + 1);
     }
   }
@@ -94,7 +104,7 @@ export let findRightCanInsert = (expressionArr, leftIndex) => {
  * @return: 返回去除多余括号后的表达式数组
  */
 export let rmExcessBrackets = (expressionArr) => {
-  let exp2 = /^\(((?!.*(\)[^\(^\)]*\()).)*\)$/;   // 第一位是(,最后一位是)，然后中间不是 )...( 的情况，就要去除首尾
+  let exp2 = /^\(((?!.*(\)[^\(^\)]*\()).)*\)$/; // 第一位是(,最后一位是)，然后中间不是 )...( 的情况，就要去除首尾
   // console.log("去除括号",expressionArr);
   // console.log("去除括号",expressionArr.join(''));
   if (exp2.test(expressionArr.join(''))) {

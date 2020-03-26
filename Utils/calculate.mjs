@@ -84,7 +84,7 @@ export let calculateSuffix = (suffix) => {
     multOperands,
     divOperands
   } = Arithmetic; // 四则运算方法
-  return suffix.map(expression => {
+  return suffix.map((expression,index) => {
     let stack = []; // 存放运算结果
     expression.forEach(item => {
       if (item instanceof Operands) {
@@ -114,6 +114,6 @@ export let calculateSuffix = (suffix) => {
       }
     })
     let top = stack.pop();
-    return [top.toValue(), top.toStr()];
+    return `${index+1}. ${top.toStr()}`;
   })
 }

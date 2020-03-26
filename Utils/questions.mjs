@@ -12,7 +12,7 @@ import {
 } from './calculate.mjs' // 与计算相关的方法
 import {
   writeFile
-} from './file.mjs'
+} from './file.mjs' 
 
 /**
  * @description: 生成题目的函数
