@@ -19,7 +19,7 @@ export const randomNum = (min, max) => Math.floor(Math.random() * (max - min + 1
 export const gcd = (num1, num2) => {
   let remainder = 0;
   do {
-    console.log(1111);
+    // console.log(1111);
     remainder = num1 % num2;
     num1 = num2;
     num2 = remainder;

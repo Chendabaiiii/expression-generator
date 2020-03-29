@@ -20,8 +20,8 @@ export default class Operands {
 
   // 转换为 a'b/c 格式的字符串
   toStr() {
-    console.log(this);
-    console.log(this.value);
+    // console.log(this);
+    // console.log(this.value);
     this.absDen = Math.abs(this.denominator);   // 取绝对值 1
     this.absNum = Math.abs(this.numerator);     // 取绝对值 0 
     this.isNegative = this.denominator * this.numerator < 0 ? '-' : '';   // 是否是负数 ''

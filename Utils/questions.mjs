@@ -39,7 +39,7 @@ export let generateQuestions = (total, range) => {
           range,
           canBeZero
         });
-        expArr.pop()
+        expArr.pop();
         expArr.push(operands);
       }
       if (j !== operatorNum) {
@@ -53,7 +53,7 @@ export let generateQuestions = (total, range) => {
 
   // 给数组中每一条表达式插入括号
   let insertBracketsArr = insertBrackets(questionArr);
-  console.log('1111', insertBracketsArr);
+  console.log('插入后', insertBracketsArr);
 
   // 题目转为写入文件的字符串格式（无转后缀）
   let strQuestionsArr = questionsToStr(insertBracketsArr);
