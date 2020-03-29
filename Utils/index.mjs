@@ -1,5 +1,7 @@
 // 公用函数模块
-
+const {
+  dialog
+} = require('electron').remote; // 文件选择框
 /**
  * @description: 生成 [min, max] 之间的随机数
  * @param {number} min 左区间
@@ -17,6 +19,7 @@ export const randomNum = (min, max) => Math.floor(Math.random() * (max - min + 1
 export const gcd = (num1, num2) => {
   let remainder = 0;
   do {
+    console.log(1111);
     remainder = num1 % num2;
     num1 = num2;
     num2 = remainder;
@@ -44,4 +47,18 @@ export const parameterCheck = (mode, param) => {
     }
   }
   return true;
+}
+
+/**
+ * @description: 错误提示框
+ * @param {string} title 标题
+ * @param {string} msg 提示内容
+ */
+export let errorTip = (title = '错误', msg) => {
+  dialog.showMessageBox({
+    type: 'error',
+    title: title,
+    message: msg,
+    buttons: ['知道了']
+  })
 }

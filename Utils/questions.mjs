@@ -7,8 +7,7 @@ import {
   insertBrackets
 } from './brackets.mjs' // 与括号相关的方法
 import {
-  calculateSuffix, // 计算后缀表达式
-  toSuffixExp, // 中缀转后缀
+  calculateExp, // 计算中缀表达式
 } from './calculate.mjs' // 与计算相关的方法
 import {
   writeFile,
@@ -30,10 +29,19 @@ export let generateQuestions = (total, range) => {
     let operatorNum = operandNum - 1; // 1-3个操作符
     let expArr = []; // 表达式数组
     for (let j = 0; j < operandNum; j++) {
-      expArr.push(new Operands({
+      let operands = new Operands({
         range,
         canBeZero
-      }));
+      });
+      expArr.push(operands);
+      while (calculateExp(expArr).value < 0) {
+        operands = new Operands({
+          range,
+          canBeZero
+        });
+        expArr.pop()
+        expArr.push(operands);
+      }
       if (j !== operatorNum) {
         let operator = new Operator(); // 随机生成操作符
         canBeZero = (operator.operator === '÷') ? false : true; // 如果操作符是 ÷ ，那么下一个生成数不能为 0
@@ -43,36 +51,56 @@ export let generateQuestions = (total, range) => {
     questionArr.push(expArr);
   }
 
-  let insertBracketsArr = insertBrackets(questionArr); // 插入括号
-  let strAnswersArr = questionsToStr(insertBracketsArr);
+  // 给数组中每一条表达式插入括号
+  let insertBracketsArr = insertBrackets(questionArr);
+  console.log('1111', insertBracketsArr);
+
+  // 题目转为写入文件的字符串格式（无转后缀）
+  let strQuestionsArr = questionsToStr(insertBracketsArr);
+  // console.log('2222');
+
+  insertBracketsArr.forEach((item, index) => {
+    // console.log(index, calculateExp(item));
+  })
+  // 转为写入文件格式的答案数组
+  // let answers = insertBracketsArr.map((exp, index) => `${index+1}. ${calculateExp(exp).toStr()}`);
   console.log("插入括号后：", insertBracketsArr);
-  console.log("变为对应的题目格式后：", strAnswersArr);
-  console.log("转为后缀表达式：", questionsToStr(toSuffixExp(insertBracketsArr)));
-  console.log("答案：", calculateSuffix(toSuffixExp(insertBracketsArr)));
-  // writeFile('Exercises.txt', strAnswersArr.join('\n'));
-  // writeFile('Answers.txt', calculateSuffix(toSuffixExp(insertBracketsArr)).join('\n'));
+  console.log("变为对应的题目格式后：", strQuestionsArr);
+  let a = insertBracketsArr.map(exp => calculateExp(exp));
+  console.log("答案：", a.map((exp, index) => `${index+1}. ${exp.toStr()}`));
+  
+  // console.log("转为文件的答案：", answers);
+  writeFile('Exercises.txt', strQuestionsArr.join('\n'));
+  // console.log(answers);
 }
 
 /**
  * @description: 题目数组遍历转换为题目格式(string[]) 
  * @param {Array[]} questionArr  题目数组
- * @return: 转为固定格式的题目字符串数组
+ * @return: 转为固定格式的题目字符串数组 例如：1. a + b + c = 
  */
-export let questionsToStr = questionArr => questionArr.map((expression, index) => {
+let questionsToStr = questionArr => questionArr.map((expression, index) => {
   let str = expression.map(item => (typeof item === 'object') ? item.toStr() : item);
   str.unshift(`${index + 1}. `);
   return str.join('').concat(' = ');
 })
 
-
-
-
-export let analyzeQuestions = exercisefile => {
-  readFileToArr(exercisefile, (strAnswersArr) => {
-    let analyzedQuestionsArr = strAnswersArr.map((item, index) => {   //解析每一个题目
+/**
+ * @description: 分析题目文件并生成答案，与自己的答案文件进行比对生成 Grade.txt
+ * @param {string} exercisefile 题目文件的路径
+ * @param {string} answerfile 答案文件的路径
+ */
+export let analyzeQuestions = (exercisefile, answerfile) => {
+  // 读取题目文件
+  readFileToArr(exercisefile, (strQuestionsArr) => {
+    // 解析每一个题目，并得到一个嵌套答案数组[[],[],[]]
+    let realAnswersArr = strQuestionsArr.map(item => {
+      // console.log('得到的题目:', item);
       let expArr = [];
+      // 去除开头的 '1. '和结尾的 ' = '
       item = item.substring(item.indexOf(".") + 1, item.indexOf(" = ")).trim();
-      expArr = item.split("");
+      expArr = item.split(""); // 字符串先转为数组，为了在括号旁边插入空格
+      // 括号旁边插入空格
       for (let i = 0; i < expArr.length; i++) {
         if (expArr[i] === '(') {
           expArr.splice(i++ + 1, 0, " ");
@@ -80,63 +108,80 @@ export let analyzeQuestions = exercisefile => {
           expArr.splice(i++, 0, " ");
         }
       }
+      // 通过空格隔开操作数、操作符与括号
+      // console.log('得到的题目:', expArr.join(""));
       expArr = expArr.join("").split(" ");
-      // console.log(expArr.join(""));
-      let expression = expArr.map(item => {
+      // 将字符串表达式转为对应可运算的类
+      let answer = expArr.map(item => {
         if (["+", "×", "÷", "-"].indexOf(item) >= 0) {
-          return new Operator(item);
+          return new Operator(item); // 操作符
         } else if ("(" === item || ")" === item) {
-          return item;
+          return item; // 括号
         } else {
+          // 操作数，则将操作数的带分数的整数部分、分母、分子分离,并返回操作数实例
           let element = item.split(/'|\//).map(item => parseInt(item));
-          let length = element.length;
-          switch (length) {
-            case 1: {//操作数是整数
+          // console.log("element",element);
+          switch (element.length) {
+            case 1:
+              // 操作数是整数
               return new Operands({
-                denominator: 1,
-                numerator: element[0]
+                denominator: 1, // 分母
+                numerator: element[0] // 分子
               });
-            }
-            case 2: {//操作数不是带分数的分数
+            case 2:
+              // 操作数不是带分数的分数
               return new Operands({
                 denominator: element[1],
                 numerator: element[0]
               });
-            }
-            case 3: {//操作数是带分数
+            case 3:
+              // 操作数是带分数
               return new Operands({
                 denominator: element[2],
                 numerator: element[0] * element[2] + element[1]
               });
-            }
           }
         }
       })
-      return expression;
+      // console.log("answer",answer);
+
+      return calculateExp(answer)
     })
-    compareAnswers("Answers.txt",calculateSuffix(toSuffixExp(analyzedQuestionsArr)));
-  });   //字符串题目
+    // 将答案文件与标准答案进行比对
+    compareAnswers(answerfile, realAnswersArr);
+  });
 }
 
-
-export let compareAnswers = (answerfile, realAnswer) => {
+/**
+ * @description: 将答案文件与标准答案进行比对
+ * @param {string} answerfile 答案文件的路径 
+ * @param {string[]} realAnswer 正确答案的数组 
+ */
+let compareAnswers = (answerfile, realAnswer) => {
+  // 解析答案文件
   readFileToArr(answerfile, (strAnswersArr) => {
-    let analyzedAnswersArr = strAnswersArr.map(item => item.substring(item.indexOf(".") + 1).trim())
-    let wrongCnt = 0, correctCnt = 0;
-    let wrongNumArr = [];       //记录错题序号
-    let rightNumArr = [];       //记录对题序号
-    analyzedAnswersArr.forEach((item, index) => {
-      console.log(item,realAnswer[index]);
-      let real = realAnswer[index];
-      if (item === real.substring(real.indexOf(".") + 1).trim()) {
-        correctCnt++;
-        rightNumArr.push(index + 1);
-      } else {
-        wrongCnt++;
-        wrongNumArr.push(index + 1);
-      }
+    // console.log("读取到的答案文件",strAnswersArr);
+    // 去除答案文件的序号
+    let analyzedAnswersArr = strAnswersArr.map(item => {
+      // console.log('1111',item);
+      let a = item.substring(item.indexOf(".") + 1).trim();
+      // console.log('2222',a);
+      return a;
     })
-    writeFile("Grade.txt", `Correct: ${correctCnt}(${rightNumArr.join(",")})\nWrong: ${wrongCnt}(${wrongNumArr.join(",")})`);
-  });   //字符串题目
+    let wrongNumArr = []; // 记录错题序号
+    let rightNumArr = []; // 记录对题序号
+    analyzedAnswersArr.forEach((item, index) => {
+      // 答案相同则推入rightNumArr，否则推入wrongNumArr
+      // console.log(realAnswer[index].toStr(), item);
+      (item === realAnswer[index].toStr()) ? rightNumArr.push(index + 1): wrongNumArr.push(index + 1);
+      // if (item === realAnswer[index].toStr()) {
+      //   rightNumArr.push(index + 1);
+      // } else {
+      //   wrongNumArr.push(index + 1);
+      // }
+    })
+    // 写入根目录的 Grade.txt 文件
+    writeFile("Grade.txt", `Correct: ${rightNumArr.length}(${rightNumArr.join(",")})\nWrong: ${wrongNumArr.length}(${wrongNumArr.join(",")})`);
+  });
 }
-analyzeQuestions("d:/depot/expression-generator/Exercises.txt");
+// analyzeQuestions("Exercises.txt", "Answers.txt");

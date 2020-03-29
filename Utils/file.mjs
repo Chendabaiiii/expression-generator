@@ -21,22 +21,21 @@ export let readFileToArr = (fReadName, callback) => {
   objReadline.on('close', function () {
     callback && callback(lines);
   });
-  return lines;
 }
 
 /**
  * @description: 写入文件
  * @param {string} 文件名，写在根目录下
- * @param {string} data
+ * @param {string} data 写入文件的内容
  */
-export let writeFile = (fileName, data) => {
+export let writeFile = (fileName, data, callback) => {
   let filePath = path.join(__dirname, fileName);  // 文件放在根目录
-  // let data = strQuestionsArr.join('\n');
   fs.writeFile(filePath, data, err => {
     if (err) {
       console.error('文件写入失败');
     } else {
       console.log('文件写入成功');
+      callback && callback();
     }
   })
 }
