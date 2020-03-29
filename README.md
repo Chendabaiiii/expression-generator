@@ -2,6 +2,7 @@
 > 利用`Electron`技术开发的四则运算表达式生成器桌面程序
 
 ## App目录描述
+expression-generator-win32-x64 是应用程序包，包含可运行的 exe 文件
 ```txt
 App
 ├── node_modules 			// 依赖包
