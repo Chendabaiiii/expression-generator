@@ -52,26 +52,24 @@ export let generateQuestions = (total, range) => {
   }
 
   // 给数组中每一条表达式插入括号
+  console.time('插入括号总时间');
   let insertBracketsArr = insertBrackets(questionArr);
-  console.log('插入后', insertBracketsArr);
+  console.timeEnd('插入括号总时间');
 
   // 题目转为写入文件的字符串格式（无转后缀）
+  console.time('转为文件字符串时间');
   let strQuestionsArr = questionsToStr(insertBracketsArr);
-  // console.log('2222');
+  console.timeEnd('转为文件字符串时间');
 
-  insertBracketsArr.forEach((item, index) => {
-    // console.log(index, calculateExp(item));
-  })
   // 转为写入文件格式的答案数组
-  // let answers = insertBracketsArr.map((exp, index) => `${index+1}. ${calculateExp(exp).toStr()}`);
-  console.log("插入括号后：", insertBracketsArr);
-  console.log("变为对应的题目格式后：", strQuestionsArr);
-  let a = insertBracketsArr.map(exp => calculateExp(exp));
-  console.log("答案：", a.map((exp, index) => `${index+1}. ${exp.toStr()}`));
+  console.time('计算后缀表达式并生成字符串格式答案');
+  let answers = insertBracketsArr.map((exp, index) => `${index+1}. ${calculateExp(exp).toStr()}`);
+  console.timeEnd('计算后缀表达式并生成字符串格式答案');
   
-  // console.log("转为文件的答案：", answers);
+  console.time('写入文件时间');
   writeFile('Exercises.txt', strQuestionsArr.join('\n'));
-  // console.log(answers);
+  writeFile('Answers.txt', answers.join('\n'));
+  console.timeEnd('写入文件时间');
 }
 
 /**
@@ -95,7 +93,6 @@ export let analyzeQuestions = (exercisefile, answerfile) => {
   readFileToArr(exercisefile, (strQuestionsArr) => {
     // 解析每一个题目，并得到一个嵌套答案数组[[],[],[]]
     let realAnswersArr = strQuestionsArr.map(item => {
-      // console.log('得到的题目:', item);
       let expArr = [];
       // 去除开头的 '1. '和结尾的 ' = '
       item = item.substring(item.indexOf(".") + 1, item.indexOf(" = ")).trim();
@@ -109,7 +106,6 @@ export let analyzeQuestions = (exercisefile, answerfile) => {
         }
       }
       // 通过空格隔开操作数、操作符与括号
-      // console.log('得到的题目:', expArr.join(""));
       expArr = expArr.join("").split(" ");
       // 将字符串表达式转为对应可运算的类
       let answer = expArr.map(item => {
@@ -120,7 +116,6 @@ export let analyzeQuestions = (exercisefile, answerfile) => {
         } else {
           // 操作数，则将操作数的带分数的整数部分、分母、分子分离,并返回操作数实例
           let element = item.split(/'|\//).map(item => parseInt(item));
-          // console.log("element",element);
           switch (element.length) {
             case 1:
               // 操作数是整数
@@ -143,8 +138,6 @@ export let analyzeQuestions = (exercisefile, answerfile) => {
           }
         }
       })
-      // console.log("answer",answer);
-
       return calculateExp(answer)
     })
     // 将答案文件与标准答案进行比对
@@ -160,28 +153,17 @@ export let analyzeQuestions = (exercisefile, answerfile) => {
 let compareAnswers = (answerfile, realAnswer) => {
   // 解析答案文件
   readFileToArr(answerfile, (strAnswersArr) => {
-    // console.log("读取到的答案文件",strAnswersArr);
     // 去除答案文件的序号
     let analyzedAnswersArr = strAnswersArr.map(item => {
-      // console.log('1111',item);
-      let a = item.substring(item.indexOf(".") + 1).trim();
-      // console.log('2222',a);
-      return a;
+      return item.substring(item.indexOf(".") + 1).trim();
     })
     let wrongNumArr = []; // 记录错题序号
     let rightNumArr = []; // 记录对题序号
     analyzedAnswersArr.forEach((item, index) => {
       // 答案相同则推入rightNumArr，否则推入wrongNumArr
-      // console.log(realAnswer[index].toStr(), item);
       (item === realAnswer[index].toStr()) ? rightNumArr.push(index + 1): wrongNumArr.push(index + 1);
-      // if (item === realAnswer[index].toStr()) {
-      //   rightNumArr.push(index + 1);
-      // } else {
-      //   wrongNumArr.push(index + 1);
-      // }
     })
     // 写入根目录的 Grade.txt 文件
     writeFile("Grade.txt", `Correct: ${rightNumArr.length}(${rightNumArr.join(",")})\nWrong: ${wrongNumArr.length}(${wrongNumArr.join(",")})`);
   });
 }
-// analyzeQuestions("Exercises.txt", "Answers.txt");

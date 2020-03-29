@@ -5,7 +5,6 @@ import {
   calculateExp
 } from './calculate.mjs'
 import Operands from '../Class/Operands.mjs'
-import Operator from '../Class/Operator.mjs'
 
 /**
  * @description: 给问题数组的每个表达式插入括号的主要函数
@@ -27,13 +26,10 @@ export let insertBrackets = (questionArr) => {
     }
     // 将原来 item 项（即一个表达式）随机插入 bracketsNum 对括号
     let newItem = item;
-    console.log("插入括号的index", index);
-
     while (bracketsNum--) {
-      // console.log(newItem);
       newItem = randomInsertBrackets(newItem);
     }
-    return rmExcessBrackets(newItem);
+    return newItem; // 移除无意义的括号
   });
 }
 
@@ -73,23 +69,10 @@ let findLeftCanInsert = (expressionArr) => {
 let findRightCanInsert = (expressionArr, leftInsertIndex) => {
   let Arr = []; // 右括号可以插入的位置数组
   let beforeInsert = expressionArr; // 未插入括号之前的表达式
-  console.log('插入前', beforeInsert);
   let beforeValue = calculateExp(beforeInsert); // 计算未插入之前的值
-  // 插入左括号
-  expressionArr.splice(leftInsertIndex, 0, '(');
-  // let operatorCnt = []; // 计算操作符个数
-  // let frontOperator = null; 
-  // 获取左括号前面的操作符
-  // (!leftInsertIndex) && (frontOperator = expressionArr[leftInsertIndex - 1]);
-  // leftInsertIndex && expressionArr.forEach(item => {
-  //   if (item instanceof Operator) {
-  //     operatorCnt[item.operator]++; // + - × ÷
-  //   }
-  // })
-  // 1 2 3 
-  //    ↓ 
-  // 1 (2 3
-  let left = 0, right = 0; // 找到右括号后判断左右括号之间是否成对括号
+  expressionArr.splice(leftInsertIndex, 0, '('); // 插入左括号
+  let left = 0;
+  let right = 0; // 找到右括号后判断左右括号之间是否成对括号
   for (let i = leftInsertIndex + 1; i < expressionArr.length; i++) {
     if (expressionArr[i] === '(') {
       left++;
@@ -98,7 +81,6 @@ let findRightCanInsert = (expressionArr, leftInsertIndex) => {
     }
     // 操作数的右边而且操作数左边没有(
     if ((expressionArr[i] instanceof Operands) && left === right && (expressionArr[i - 1] !== '(')) {
-      // console.log("nnnnnn", expressionArr[i - 1], expressionArr[i], expressionArr);
       Arr.push(i + 1);
     }
   }
@@ -111,19 +93,18 @@ let findRightCanInsert = (expressionArr, leftInsertIndex) => {
   // 右括号可插入位置
   let rightInsertIndex = Arr[randomNum(0, Arr.length - 1)];
   expressionArr.splice(rightInsertIndex, 0, ')'); // 插入右括号
-  let beforeOperator = expressionArr[leftInsertIndex - 1];  //本括号外的操作符
+  let beforeOperator = expressionArr[leftInsertIndex - 1]; //本括号外的操作符
 
   // 应该要遍历整个表达式，看看此时表达式中插入括号后各个括号内的情况
-  let innerExp = [];    // 括号内容，特殊判断如果前面是÷，且括号内容是0那么括号不符合条件
-  innerExp.push(expressionArr.slice(leftInsertIndex + 1, rightInsertIndex));  //本括号
-  //只有在本括号以外的括号才需要考虑其他括号的值
-  let otherLeftIndex = expressionArr.lastIndexOf('(', leftInsertIndex - 1);  //本括号左边的左括号
+  let innerExp = []; // 括号内容，特殊判断如果前面是÷，且括号内容是0那么括号不符合条件
+  innerExp.push(expressionArr.slice(leftInsertIndex + 1, rightInsertIndex)); // 本括号
+  // 只有在本括号以外的括号才需要考虑其他括号的值
+  let otherLeftIndex = expressionArr.lastIndexOf('(', leftInsertIndex - 1); // 本括号左边的左括号
   let otherRightIndex = expressionArr.indexOf(')', rightInsertIndex + 1);
   if (otherLeftIndex !== -1 && otherRightIndex !== -1) {
     innerExp.push(expressionArr.slice(otherLeftIndex + 1, otherRightIndex));
   }
-  console.log(innerExp);
-  //当括号内的表达式小于0 ，或者前面为÷，括号为0，或者加括号无意义时去掉括号然后break
+  // 当括号内的表达式小于0 ，或者前面为÷，括号为0，或者加括号无意义时去掉括号然后break
   let shouldDelete = 0;
   for (let i = 0; i < innerExp.length; i++) {
     let innerExpValue = calculateExp(innerExp[i]).value;
@@ -140,19 +121,18 @@ let findRightCanInsert = (expressionArr, leftInsertIndex) => {
     expressionArr.splice(rightInsertIndex, 1); // 删除右括号
     expressionArr.splice(leftInsertIndex, 1); // 删除左括号
   }
-  console.log(expressionArr);
   return expressionArr;
 }
 
-/**
- * @description: 去除多余的括号 TODO:
- * @param {(string|Object)[]} expressionArr 已经插入了括号后的表达式数组 
- * @return: 返回去除多余括号后的表达式数组
- */
-let rmExcessBrackets = (expressionArr) => {
-  let exp1 = /^\(((?!.*(\)[^\(^\)]*\()).)*\)$/; // 第一位是(,最后一位是)，然后中间不是 )...( 的情况，就要去除首尾
-  if (exp1.test(expressionArr.join(''))) {
-    return expressionArr.slice(1, expressionArr.length - 1);
-  }
-  return expressionArr;
-}
+// /**
+//  * @description: 去除多余的括号 TODO:
+//  * @param {(string|Object)[]} expressionArr 已经插入了括号后的表达式数组 
+//  * @return: 返回去除多余括号后的表达式数组
+//  */
+// let rmExcessBrackets = (expressionArr) => {
+//   let exp1 = /^\(((?!.*(\)[^\(^\)]*\()).)*\)$/; // 第一位是(,最后一位是)，然后中间不是 )...( 的情况，就要去除首尾
+//   if (exp1.test(expressionArr.join(''))) {
+//     return expressionArr.slice(1, expressionArr.length - 1);
+//   }
+//   return expressionArr;
+// }

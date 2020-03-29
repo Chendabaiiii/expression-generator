@@ -8,14 +8,14 @@ const path = require('path')
 function createWindow() {
   // 创建窗口
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 500,
+    height: 650,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
     }
   })
-  mainWindow.webContents.openDevTools(); // 开发打开控制台
+  // mainWindow.webContents.openDevTools(); // 开发打开控制台
   // 加载主进程
   mainWindow.loadFile('index.html')
 }

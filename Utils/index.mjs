@@ -19,7 +19,6 @@ export const randomNum = (min, max) => Math.floor(Math.random() * (max - min + 1
 export const gcd = (num1, num2) => {
   let remainder = 0;
   do {
-    // console.log(1111);
     remainder = num1 % num2;
     num1 = num2;
     num2 = remainder;
@@ -33,21 +32,21 @@ export const gcd = (num1, num2) => {
  * @param {string} param  模式对应的参数
  * @return: 合法返回true，否则返回false
  */
-export const parameterCheck = (mode, param) => {
-  // 如果是其他模式则返回错误
-  if (['-n', '-r', '-e', '-a'].indexOf(mode) === -1) {
-    console.log('参数有误，请重新输入！');
-    return false;
-  }
-  // -n -r 的参数一定得是数字
-  if (['-n', '-r'].indexOf(mode) !== -1) {
-    if (!(/^\d+$/.test(param))) {
-      console.log('参数有误，请重新输入！');
-      return false;
-    }
-  }
-  return true;
-}
+// export const parameterCheck = (mode, param) => {
+//   // 如果是其他模式则返回错误
+//   if (['-n', '-r', '-e', '-a'].indexOf(mode) === -1) {
+//     console.log('参数有误，请重新输入！');
+//     return false;
+//   }
+//   // -n -r 的参数一定得是数字
+//   if (['-n', '-r'].indexOf(mode) !== -1) {
+//     if (!(/^\d+$/.test(param))) {
+//       console.log('参数有误，请重新输入！');
+//       return false;
+//     }
+//   }
+//   return true;
+// }
 
 /**
  * @description: 错误提示框

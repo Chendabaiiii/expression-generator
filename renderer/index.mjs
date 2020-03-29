@@ -4,7 +4,6 @@ import {
   analyzeQuestions
 } from '../Utils/questions.mjs' // 生成题目的函数
 import {
-  // parameterCheck,
   errorTip
 } from '../Utils/index.mjs'
 const $ = require('jquery')
@@ -71,7 +70,9 @@ $proofreadBtn.on('click', function () {
     errorTip('文件选择错误','请确定是否题目文件和答案文件都选择了');
   } else {
     // 校对文件
+    console.time('校对文件');
     analyzeQuestions(filePath[0], filePath[1]);
+    console.timeEnd('校对文件');
     dialog.showMessageBox({
       type: 'none',
       title: '校对完毕',
@@ -84,7 +85,9 @@ $proofreadBtn.on('click', function () {
 $generateBtn.on('click', function() {
   if(/^\d+$/.test($questionTotal.val()) && /^\d+$/.test($range.val())) {
     // 生成 questionTotal 个题目
+    console.time('生成题目总时间');
     generateQuestions(Number($questionTotal.val()), Number($range.val()));
+    console.timeEnd('生成题目总时间');
     dialog.showMessageBox({
       type: 'none',
       title: '生成完毕',
