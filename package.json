@@ -18,7 +18,7 @@
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.9.2",
-    "electron": "^8.1.1",
+    "electron": "^8.5.2",
     "electron-packager": "^14.2.1"
   },
   "dependencies": {
